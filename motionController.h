@@ -1,13 +1,16 @@
+#ifndef MOTIONCONTROLLER__
+#define MOTIONCONTROLLER_
 class MotionController {
     public:
-        bool managerInitialized;
         MotionController();
         ~MotionController();
-        int initMotionManager();
+        bool initMotionManager();
         void executePage(int);
         bool actionRunning();
     protected:
+        bool managerInitialized;
         void changeCurrentDir();
         void sighandler(int);
     
 };
+#endif

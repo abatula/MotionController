@@ -2,10 +2,17 @@
  * MotionController.cpp
  * Author:      Alyssa Batula
  * Created:     7/3/2013
- * Modified:    7/3/2013
+ * Modified:    7/10/2013
  *
  * Description: 
- * This class allows high level access and control of DARwIn-OP's movements.
+ * This class allows high level access and control of DARwIn-OP's movements 
+ * through a motion controller object. Initialize the motion manager, execute 
+ * a specified page, and check if a motion is finished executing.
+ * 
+ * Examples:
+ * bool initMotionManager();
+ * void executePage(int pageNumber);
+ * bool actionRunning();
  * 
  * Based off of the action_script demo written by robotis corp.
  * and the beat tracking code by Mark Koh.
@@ -41,6 +48,8 @@
 #include "LinuxCM730.h"
 #include "LinuxActionScript.h"
 
+#include "motionController.h"
+
 #ifdef MX28_1024
 #define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
 #else
@@ -54,7 +63,7 @@
 MotionController::MotionController()
 /* Constructor */
 {
-    managerInitialized = False; // Motion manager is initially not initialized
+    managerInitialized = false; // Motion manager is initially not initialized
 }
 
 MotionController::~MotionController()
@@ -62,16 +71,16 @@ MotionController::~MotionController()
 {
 }
 
-int MotionController::initMotionManager()
+bool MotionController::initMotionManager()
 /* 
  * Initialize the motion manager to control DARwIn-OP by selecting and running pages. 
- * Return 1 on success, otherwise return 0
+ * Return True on success, otherwise return False
  */
 {
-    signal(SIGABRT, &sighandler);
-    signal(SIGTERM, &sighandler);
-    signal(SIGQUIT, &sighandler);
-    signal(SIGINT, &sighandler);
+    signal(SIGABRT, &MotionController::sighandler);
+    signal(SIGTERM, &MotionController::sighandler);
+    signal(SIGQUIT, &MotinController::sighandler);
+    signal(SIGINT, &MotionController::sighandler);
 
     /* Declare server and socket variables */
     struct sockaddr_in sad; //Structure to hold server IP Address
@@ -80,7 +89,8 @@ int MotionController::initMotionManager()
     int slen=sizeof(cad);
     char buf[BUFLEN];
 
-    MotionController::changeCurrentDir();
+    // FIXME: I'm not sure this does anything
+    MotionController::changeCurrentDir(); 
 
     Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
 
@@ -89,7 +99,7 @@ int MotionController::initMotionManager()
     CM730 cm730(&linux_cm730);
     if(MotionManager::GetInstance()->Initialize(&cm730) == false)
     {
-        return 0;
+        return false; // Report failure to initialize (this isn't terribly uncommon, sometimes needs a retry)
     }
 
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
@@ -99,9 +109,9 @@ int MotionController::initMotionManager()
     
     MotionManager::GetInstance()->SetEnable(true); 
     
-    managerInitialized = True; // Mark manager as initialized if successful
+    managerInitialized = true; // Mark manager as initialized if successful
     
-    return 1;
+    return true;
 }
 
 void MotionController::executePage(int pageNum)
@@ -119,7 +129,7 @@ bool MotionController::actionRunning()
  * Return True if the robot is still moving, otherwise return False.
  */
 {
-    return Action::GetInstance()->IsRunning()
+    return Action::GetInstance()->IsRunning();
 }
 
 // -------

@@ -16,7 +16,7 @@ CXXFLAGS += -O2 -g -DLINUX -Wall $(INCLUDE_DIRS)
 #CXXFLAGS += -O2 -DLINUX -DDEBUG -Wall $(INCLUDE_DIRS)
 LFLAGS += -lpthread -ljpeg -lrt
 
-OBJECTS =   main.o
+OBJECTS =   main.o motionController.o
 
 all: $(TARGET)
 
