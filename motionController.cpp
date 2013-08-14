@@ -79,15 +79,15 @@ bool MotionController::initMotionManager()
 {
     signal(SIGABRT, &MotionController::sighandler);
     signal(SIGTERM, &MotionController::sighandler);
-    signal(SIGQUIT, &MotinController::sighandler);
+    signal(SIGQUIT, &MotionController::sighandler);
     signal(SIGINT, &MotionController::sighandler);
 
     /* Declare server and socket variables */
-    struct sockaddr_in sad; //Structure to hold server IP Address
-    struct sockaddr_in cad; //Structure to hold client IP Address
-    int serverSocket; //Socket descriptor
-    int slen=sizeof(cad);
-    char buf[BUFLEN];
+//     struct sockaddr_in sad; //Structure to hold server IP Address // TODO: Do I need this?
+//     struct sockaddr_in cad; //Structure to hold client IP Address // TODO: Do I need this?
+//     int serverSocket; //Socket descriptor // TODO: Do I need this?
+//     int slen=sizeof(cad); // TODO: Do I need this?
+//     char buf[BUFLEN]; // TODO: Do I need this?
 
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
@@ -143,13 +143,16 @@ void MotionController::changeCurrentDir()
 void MotionController::sighandler(int sig)
 {
     struct termios term;
-        Action::GetInstance()->Start(1);    /* Init(stand up) pose */
+    Action::GetInstance()->Start(1);    /* Init(stand up) pose */
     tcgetattr( STDIN_FILENO, &term );
     term.c_lflag |= ICANON | ECHO;
     tcsetattr( STDIN_FILENO, TCSANOW, &term );
 
     exit(0);
 }
+
+
+
 
 
 

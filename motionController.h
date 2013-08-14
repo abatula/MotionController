@@ -10,7 +10,7 @@ class MotionController {
     protected:
         bool managerInitialized;
         void changeCurrentDir();
-        void sighandler(int);
+        static void sighandler(int);
     
 };
 #endif
