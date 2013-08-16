@@ -65,7 +65,7 @@ MotionController::MotionController()
 {
     managerInitialized = false; // Motion manager is initially not initialized
     linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
-    cm730 = new CM730(linux_cm730);     // Create new object for CM730 controller
+    cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
 }
 
 MotionController::~MotionController()
@@ -89,7 +89,7 @@ bool MotionController::initMotionManager()
 
     Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
 
-    if(MotionManager::GetInstance()->Initialize(cm730) == false)
+    if(MotionManager::GetInstance()->Initialize(static_cast<CM730*> (cm730)) == false)
     {
         return false; // Report failure to initialize (this isn't terribly uncommon, sometimes needs a retry)
     }
