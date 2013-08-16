@@ -2,6 +2,8 @@
 #define MOTIONCONTROLLER_
 class MotionController {
     bool managerInitialized;
+    LinuxCM730 *linux_cm730;
+    CM730 *cm730; 
     public:
         MotionController();
         ~MotionController();

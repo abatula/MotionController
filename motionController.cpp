@@ -64,6 +64,8 @@ MotionController::MotionController()
 /* Constructor */
 {
     managerInitialized = false; // Motion manager is initially not initialized
+    linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
+    cm730 = new CM730(linux_cm730);     // Create new object for CM730 controller
 }
 
 MotionController::~MotionController()
@@ -82,22 +84,12 @@ bool MotionController::initMotionManager()
     signal(SIGQUIT, &MotionController::sighandler);
     signal(SIGINT, &MotionController::sighandler);
 
-    /* Declare server and socket variables */
-//     struct sockaddr_in sad; //Structure to hold server IP Address // TODO: Do I need this?
-//     struct sockaddr_in cad; //Structure to hold client IP Address // TODO: Do I need this?
-//     int serverSocket; //Socket descriptor // TODO: Do I need this?
-//     int slen=sizeof(cad); // TODO: Do I need this?
-//     char buf[BUFLEN]; // TODO: Do I need this?
-
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
 
     Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
 
-    //////////////////// Framework Initialize ////////////////////////////
-    LinuxCM730 linux_cm730("/dev/ttyUSB0");
-    CM730 cm730(&linux_cm730);
-    if(MotionManager::GetInstance()->Initialize(&cm730) == false)
+    if(MotionManager::GetInstance()->Initialize(cm730) == false)
     {
         return false; // Report failure to initialize (this isn't terribly uncommon, sometimes needs a retry)
     }
@@ -105,7 +97,6 @@ bool MotionController::initMotionManager()
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     motion_timer->Start();
-    /////////////////////////////////////////////////////////////////////
     
     MotionManager::GetInstance()->SetEnable(true); 
     
@@ -116,10 +107,6 @@ bool MotionController::initMotionManager()
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
 {
-    
-     //////////////////// Framework Initialize ////////////////////////////
-    LinuxCM730 linux_cm730("/dev/ttyUSB0");
-    CM730 cm730(&linux_cm730); 
     
     // start of original
     if(managerInitialized) // Don't run if the manager is not initialized
