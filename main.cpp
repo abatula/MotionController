@@ -18,25 +18,19 @@ int main(void)
     usleep(1000000); // 1 second = 1,000,000 us
     
     if(initialized)
-    {
-        printf("\n Initialized\n");
-        
+    {        
         controller.executePage(60);
-        printf("\n Executed\n");
-        motionRunning = controller.actionRunning();
-        printf("\n Checked running\n");
-        if(motionRunning)
-        {
-            printf("\n Motion is running\n");
-        }
-        else
-        {
-            printf("\n Motion ended\n");
-        }
-        
+        motionRunning = controller.actionRunning();     
         while(motionRunning)
         {
-            printf("\n Motion is running\n");
+            usleep(1000000);
+            motionRunning = controller.actionRunning();
+        }
+        
+        controller.executePage(61);
+        motionRunning = controller.actionRunning();     
+        while(motionRunning)
+        {
             usleep(1000000);
             motionRunning = controller.actionRunning();
         }
