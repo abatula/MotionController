@@ -110,16 +110,25 @@ bool MotionController::initMotionManager()
     MotionManager::GetInstance()->SetEnable(true); 
     
     managerInitialized = true; // Mark manager as initialized if successful
-    
     return true;
 }
 
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
 {
+    
+     //////////////////// Framework Initialize ////////////////////////////
+    LinuxCM730 linux_cm730("/dev/ttyUSB0");
+    CM730 cm730(&linux_cm730); 
+    
+    // start of original
     if(managerInitialized) // Don't run if the manager is not initialized
     {
         Action::GetInstance()->Start(pageNum);
+    }
+    else
+    {
+        printf("Motion manager must be initialized!");
     }
 }
 

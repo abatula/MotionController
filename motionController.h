@@ -1,6 +1,7 @@
 #ifndef MOTIONCONTROLLER__
 #define MOTIONCONTROLLER_
 class MotionController {
+    bool managerInitialized;
     public:
         MotionController();
         ~MotionController();
@@ -8,8 +9,7 @@ class MotionController {
         void executePage(int);
         bool actionRunning();
     protected:
-        bool managerInitialized;
-        void changeCurrentDir();
+        static void changeCurrentDir();
         static void sighandler(int);
     
 };
