@@ -1,8 +1,6 @@
 /*
  * MotionController.cpp
  * Author:      Alyssa Batula
- * Created:     7/3/2013
- * Modified:    7/10/2013
  *
  * Description: 
  * This class allows high level access and control of DARwIn-OP's movements 
@@ -13,9 +11,6 @@
  * bool initMotionManager();
  * void executePage(int pageNumber);
  * bool actionRunning();
- * 
- * Based off of the action_script demo written by robotis corp.
- * and the beat tracking code by Mark Koh.
  *
  */
 
@@ -131,6 +126,7 @@ bool MotionController::actionRunning()
 // -------
 void MotionController::changeCurrentDir()
 {
+    /* Still not sure what this does, but it's in the Robotis code */
     char exepath[1024] = {0};
     if(readlink("/proc/self/exe", exepath, sizeof(exepath)) != -1)
         chdir(dirname(exepath));
@@ -138,6 +134,7 @@ void MotionController::changeCurrentDir()
 
 void MotionController::sighandler(int sig)
 {
+    /* Signal handling */
     struct termios term;
     Action::GetInstance()->Start(1);    /* Init(stand up) pose */
     tcgetattr( STDIN_FILENO, &term );
