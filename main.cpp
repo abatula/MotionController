@@ -34,6 +34,14 @@ int main(void)
             usleep(1000000);
             motionRunning = controller.actionRunning();
         }
+        
+        controller.executePage(60);
+        motionRunning = controller.actionRunning();     
+        while(motionRunning)
+        {
+            usleep(1000000);
+            motionRunning = controller.actionRunning();
+        }
             
 //         printf("\n before sleep\n");
 //         usleep(5*1000000); // 1 second = 1,000,000 us
