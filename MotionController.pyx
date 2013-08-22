@@ -21,4 +21,4 @@ cdef class PyMotionController:
     def executePage(self, pageNum):
         self.thisptr.executePage(pageNum)
     def actionRunning(self):
-        return self.thispter.actionRunning()
+        return self.thisptr.actionRunning()
