@@ -16,27 +16,20 @@ except:
 if initialized:
     print("Initialized")
     
-    controller.executePage(60)
+    controller.executePage(15)
 
-    motionRunning = controller.actionRunning()
-    print(str(motionRunning))
-    while motionRunning:
+    while controller.actionRunning():
         time.sleep(0.5)
-        motionRunning = controller.actionRunning()
-        print(str(motionRunning))
+        
+    controller.executePage(1)
+
+    while controller.actionRunning():
+        time.sleep(0.5)
+        
+    controller.executePage(15)
+
+    while controller.actionRunning():
+        time.sleep(0.5)
+
     
-    #controller->executePage(61);
-    #motionRunning = controller->actionRunning();     
-    #while(motionRunning)
-    #{
-        #usleep(1000000);
-        #motionRunning = controller->actionRunning();
-    #}
-    
-    #controller->executePage(60);
-    #motionRunning = controller->actionRunning();     
-    #while(motionRunning)
-    #{
-        #usleep(1000000);
-        #motionRunning = controller->actionRunning();
-    #}
+   
