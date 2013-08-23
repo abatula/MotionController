@@ -46,9 +46,9 @@
 #include "motionController.h"
 
 #ifdef MX28_1024
-#define MOTION_FILE_PATH    "../../../Data/motion_1024.bin"
+#define MOTION_FILE_PATH    "/darwin/Data/motion_1024.bin"
 #else
-#define MOTION_FILE_PATH    "../../../Data/motion_4096.bin"
+#define MOTION_FILE_PATH    "/darwin/Data/motion_4096.bin"
 #endif
 
 #define PORT 9930
@@ -82,7 +82,11 @@ bool MotionController::initMotionManager()
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
 
-    Action::GetInstance()->LoadFile(MOTION_FILE_PATH);
+    if(Action::GetInstance()->LoadFile(MOTION_FILE_PATH) == false)
+    {
+        printf("Failed to load motion file %s", MOTION_FILE_PATH);
+        return false;
+    }
 
     if(MotionManager::GetInstance()->Initialize(static_cast<CM730*> (cm730)) == false)
     {
