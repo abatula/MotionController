@@ -11,46 +11,39 @@
 
 int main(void)
 {  
-    MotionController controller;
+    MotionController *controller = new MotionController();
     bool initialized = false;
     bool motionRunning = false;
-    initialized = controller.initMotionManager();
+    initialized = controller->initMotionManager();
     usleep(1000000); // 1 second = 1,000,000 us
     
     if(initialized)
     {        
-        controller.executePage(60);
-        motionRunning = controller.actionRunning();     
+        printf("initialized\n");
+        controller->executePage(15);
+        motionRunning = controller->actionRunning();     
         while(motionRunning)
         {
             usleep(1000000);
-            motionRunning = controller.actionRunning();
+            motionRunning = controller->actionRunning();
         }
         
-        controller.executePage(61);
-        motionRunning = controller.actionRunning();     
+        controller->executePage(1);
+        motionRunning = controller->actionRunning();     
         while(motionRunning)
         {
             usleep(1000000);
-            motionRunning = controller.actionRunning();
+            motionRunning = controller->actionRunning();
         }
         
-        controller.executePage(60);
-        motionRunning = controller.actionRunning();     
+        controller->executePage(15);
+        motionRunning = controller->actionRunning();     
         while(motionRunning)
         {
             usleep(1000000);
-            motionRunning = controller.actionRunning();
+            motionRunning = controller->actionRunning();
         }
             
-//         printf("\n before sleep\n");
-//         usleep(5*1000000); // 1 second = 1,000,000 us
-//         printf("\n after sleep\n");
-//         motionRunning = controller->actionRunning();
-//         if(motionRunning)
-//             printf("\n Motion is running");
-//         else
-//             printf("\n Motion ended");
         
     }
     else
