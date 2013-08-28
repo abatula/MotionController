@@ -11,7 +11,8 @@ cdef extern from "motionController.h":
         void initWalking()
         void executePage(int)
         bool actionRunning()
-        void walkForward()
+        void walk(double,double)
+        void walk(double,double,double)
         void stopWalking()
         
 cdef class PyMotionController:
@@ -30,7 +31,10 @@ cdef class PyMotionController:
         self.thisptr.executePage(pageNum)
     def actionRunning(self):
         return self.thisptr.actionRunning()
-    def walkForward(self):
-        self.thisptr.walkForward()
+    def walk(self, duration=-1.0, direction=0.0, stepSize=-1):
+        if stepSize == -1:
+            self.thisptr.walk(duration, direction)
+        else:
+            self.thisptr.walk(duration, direction, stepSize)
     def stopWalking(self):
         self.thisptr.stopWalking()

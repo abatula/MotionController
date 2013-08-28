@@ -16,25 +16,18 @@ except:
 if initialized:
     print("Initialized")
     controller.initActionEditor()
-    controller.executePage(15)
-
-    while controller.actionRunning():
-        time.sleep(0.5)
-        
-    controller.executePage(1)
-
-    while controller.actionRunning():
-        time.sleep(0.5)
-        
-    controller.executePage(15)
-
-    while controller.actionRunning():
-        time.sleep(0.5)
         
     controller.initWalking()
     time.sleep(1)
-    controller.walkForward()
-    time.sleep(2)
+    controller.walk(5, 0, 0)
+    time.sleep(1)
+    controller.walk(5, 10)
+    time.sleep(1)
+    controller.walk(5, -10)
+    time.sleep(1)
+    controller.walk(-1, 0, 2)
+    
+    time.sleep(5)
     controller.stopWalking()
     time.sleep(2)
     
