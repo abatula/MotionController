@@ -20,6 +20,7 @@ int main(void)
     if(initialized)
     {        
         printf("initialized\n");
+        controller->initActionEditor();
         controller->executePage(15);
         motionRunning = controller->actionRunning();     
         while(motionRunning)
@@ -43,7 +44,23 @@ int main(void)
             usleep(1000000);
             motionRunning = controller->actionRunning();
         }
-            
+        
+        controller->initWalking();
+        usleep(1000000);
+        controller->walkForward();
+        usleep(2000000);
+        controller->stopWalking();
+        usleep(2000000);
+        
+        controller->initActionEditor();
+        controller->executePage(15);
+        motionRunning = controller->actionRunning();     
+        while(motionRunning)
+        {
+            usleep(1000000);
+            motionRunning = controller->actionRunning();
+        }
+//             
         
     }
     else

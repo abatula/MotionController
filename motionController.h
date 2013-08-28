@@ -8,8 +8,12 @@ class MotionController {
         MotionController();
         ~MotionController();
         bool initMotionManager();
+        void initActionEditor();
+        void initWalking();
         void executePage(int);
         bool actionRunning();
+        void walkForward();
+        void stopWalking();
     protected:
         static void changeCurrentDir();
         static void sighandler(int);

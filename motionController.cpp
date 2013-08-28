@@ -61,6 +61,12 @@ MotionController::MotionController()
     managerInitialized = false; // Motion manager is initially not initialized
     linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
     cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
+    
+    // Set up signal handlers
+    signal(SIGABRT, &MotionController::sighandler);
+    signal(SIGTERM, &MotionController::sighandler);
+    signal(SIGQUIT, &MotionController::sighandler);
+    signal(SIGINT, &MotionController::sighandler);
 }
 
 MotionController::~MotionController()
@@ -70,14 +76,10 @@ MotionController::~MotionController()
 
 bool MotionController::initMotionManager()
 /* 
- * Initialize the motion manager to control DARwIn-OP by selecting and running pages. 
+ * Initialize the motion manager to control DARwIn-OP. 
  * Return True on success, otherwise return False
  */
 {
-    signal(SIGABRT, &MotionController::sighandler);
-    signal(SIGTERM, &MotionController::sighandler);
-    signal(SIGQUIT, &MotionController::sighandler);
-    signal(SIGINT, &MotionController::sighandler);
 
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
@@ -92,8 +94,7 @@ bool MotionController::initMotionManager()
     {
         return false; // Report failure to initialize (this isn't terribly uncommon, sometimes needs a retry)
     }
-
-    MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+    
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
     motion_timer->Start();
     
@@ -101,6 +102,23 @@ bool MotionController::initMotionManager()
     
     managerInitialized = true; // Mark manager as initialized if successful
     return true;
+}
+
+void MotionController::initActionEditor()
+{
+    /*
+     * Set up the action editor module to control DARwIn-OP by running pages
+     */
+    MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+}
+
+void MotionController::initWalking()
+{
+    /*
+     * Set up the walking module
+     */
+    MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
+    Walking::GetInstance()->Initialize();
 }
 
 void MotionController::executePage(int pageNum)
@@ -125,6 +143,22 @@ bool MotionController::actionRunning()
  */
 {
     return Action::GetInstance()->IsRunning();
+}
+
+void MotionController::walkForward()
+/*
+ * Start walking forward
+ */
+{
+    Walking::GetInstance()->Start();
+}
+
+void MotionController::stopWalking()
+/*
+ * Stop walking
+ */
+{
+    Walking::GetInstance()->Stop();
 }
 
 // -------
