@@ -7,8 +7,12 @@ cdef extern from "motionController.h":
     cdef cppclass MotionController:
         MotionController() except +
         bool initMotionManager()
+        void initActionEditor()
+        void initWalking()
         void executePage(int)
         bool actionRunning()
+        void walkForward()
+        void stopWalking()
         
 cdef class PyMotionController:
     cdef MotionController *thisptr
@@ -18,7 +22,15 @@ cdef class PyMotionController:
         del self.thisptr
     def initMotionManager(self):
         return self.thisptr.initMotionManager()
+    def initActionEditor(self):
+        self.thisptr.initActionEditor()
+    def initWalking(self):
+        self.thisptr.initWalking()
     def executePage(self, pageNum):
         self.thisptr.executePage(pageNum)
     def actionRunning(self):
         return self.thisptr.actionRunning()
+    def walkForward(self):
+        self.thisptr.walkForward()
+    def stopWalking(self):
+        self.thisptr.stopWalking()

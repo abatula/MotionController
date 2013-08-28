@@ -15,7 +15,7 @@ except:
 
 if initialized:
     print("Initialized")
-    
+    controller.initActionEditor()
     controller.executePage(15)
 
     while controller.actionRunning():
@@ -30,6 +30,21 @@ if initialized:
 
     while controller.actionRunning():
         time.sleep(0.5)
+        
+    controller.initWalking()
+    time.sleep(1)
+    controller.walkForward()
+    time.sleep(2)
+    controller.stopWalking()
+    time.sleep(2)
+    
+    controller.initActionEditor()
+    controller.executePage(15)
+    
+    while controller.actionRunning():
+        time.sleep(0.5)
+else:
+    print('Initialization Failed')
 
     
    
