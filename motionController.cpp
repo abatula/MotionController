@@ -51,6 +51,8 @@
 #define MOTION_FILE_PATH    "/darwin/Data/motion_4096.bin"
 #endif
 
+#define INI_FILE_PATH       "/darwin/Data/config.ini" // FIXME: Do i need this?
+
 #define PORT 9930
 #define BUFLEN 70
 #define SAMPLE_RATE (44100)
@@ -96,9 +98,7 @@ bool MotionController::initMotionManager()
     }
     
     LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
-    motion_timer->Start();
-    
-    MotionManager::GetInstance()->SetEnable(true); 
+    motion_timer->Start(); 
     
     managerInitialized = true; // Mark manager as initialized if successful
     return true;
@@ -109,15 +109,54 @@ void MotionController::initActionEditor()
     /*
      * Set up the action editor module to control DARwIn-OP by running pages
      */
+    
     MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+    MotionManager::GetInstance()->SetEnable(true);
 }
 
 void MotionController::initWalking()
 {
     /*
-     * Set up the walking module
+     * Get DARwIn ready for walking
      */
+    
+    minIni* ini = new minIni(INI_FILE_PATH);
+    Walking::GetInstance()->LoadINISettings(ini);
+    
     MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
+    
+    // Have DARwIn get to walk ready position SLOWLY
+    int n = 0;
+    int param[JointData::NUMBER_OF_JOINTS * 5];
+    int wGoalPosition, wStartPosition, wDistance;
+
+    for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+    {
+        wStartPosition = MotionStatus::m_CurrentJoints.GetValue(id);
+        wGoalPosition = Walking::GetInstance()->m_Joint.GetValue(id);
+        if( wStartPosition > wGoalPosition )
+            wDistance = wStartPosition - wGoalPosition;
+        else
+            wDistance = wGoalPosition - wStartPosition;
+
+        wDistance >>= 2;
+        if( wDistance < 8 )
+            wDistance = 8;
+
+        param[n++] = id;
+        param[n++] = CM730::GetLowByte(wGoalPosition);
+        param[n++] = CM730::GetHighByte(wGoalPosition);
+        param[n++] = CM730::GetLowByte(wDistance);
+        param[n++] = CM730::GetHighByte(wDistance);
+    }
+    (static_cast<CM730*>(cm730))->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
+    
+    usleep(1000000); // Give DARwIn time to get to the position
+    
+    // Enable walking and the motion manager
+    Walking::GetInstance()->m_Joint.SetEnableBody(true);
+    MotionManager::GetInstance()->SetEnable(true);
+    
     Walking::GetInstance()->Initialize();
 }
 
