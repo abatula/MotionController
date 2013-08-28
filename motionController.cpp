@@ -184,12 +184,44 @@ bool MotionController::actionRunning()
     return Action::GetInstance()->IsRunning();
 }
 
-void MotionController::walkForward()
+void MotionController::walk(double duration, double direction)
 /*
- * Start walking forward
+ * Walk in the specified direction for the given amount of time
+ * 
+ * duration - walk for the specified number of seconds (-1 for continuous walking)
+ * direction - Walk forward (0), turn left (positive) or turn right (negative)
  */
 {
+    Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
     Walking::GetInstance()->Start();
+    
+    if(duration >= 0.0)
+    {
+        usleep(duration*1000000);
+        Walking::GetInstance()->Stop();
+    }
+        
+}
+
+void MotionController::walk(double duration, double direction, double stepSize)
+/*
+ * Walk in the specified direction for the given amount of time with the specified stepSize
+ * 
+ * duration - walk for the specified number of seconds (-1 for continuous walking)
+ * direction - Walk forward (0), turn left (positive) or turn right (negative)
+ * stepSize - Size of step to take
+ */
+{
+    Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
+    Walking::GetInstance()->X_MOVE_AMPLITUDE = stepSize;
+    Walking::GetInstance()->Start();
+    
+    if(duration >= 0.0)
+    {
+        usleep(duration*1000000);
+        Walking::GetInstance()->Stop();
+    }
+        
 }
 
 void MotionController::stopWalking()

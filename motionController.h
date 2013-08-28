@@ -12,7 +12,8 @@ class MotionController {
         void initWalking();
         void executePage(int);
         bool actionRunning();
-        void walkForward();
+        void walk(double, double);
+        void walk(double, double, double);
         void stopWalking();
     protected:
         static void changeCurrentDir();

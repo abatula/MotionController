@@ -20,35 +20,18 @@ int main(void)
     if(initialized)
     {        
         printf("initialized\n");
-        controller->initActionEditor();
-        controller->executePage(15);
-        motionRunning = controller->actionRunning();     
-        while(motionRunning)
-        {
-            usleep(1000000);
-            motionRunning = controller->actionRunning();
-        }
-        
-        controller->executePage(1);
-        motionRunning = controller->actionRunning();     
-        while(motionRunning)
-        {
-            usleep(1000000);
-            motionRunning = controller->actionRunning();
-        }
-        
-        controller->executePage(15);
-        motionRunning = controller->actionRunning();     
-        while(motionRunning)
-        {
-            usleep(1000000);
-            motionRunning = controller->actionRunning();
-        }
         
         controller->initWalking();
         usleep(1000000);
-        controller->walkForward();
-        usleep(2000000);
+        controller->walk(5.0, 0.0, 0.0);
+        usleep(1000000);
+        controller->walk(5.0, 10.0);
+        usleep(1000000);
+        controller->walk(5.0, -10.0);
+        usleep(1000000);
+        controller->walk(-1.0, 0.0, 2.0);
+        
+        usleep(5000000);
         controller->stopWalking();
         usleep(2000000);
         
