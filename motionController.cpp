@@ -4,13 +4,16 @@
  *
  * Description: 
  * This class allows high level access and control of DARwIn-OP's movements 
- * through a motion controller object. Initialize the motion manager, execute 
- * a specified page, and check if a motion is finished executing.
+ * through a motion controller object. This code supports using either the 
+ * motion manager for pre-programmed motions or the walking manager.
  * 
  * Examples:
  * bool initMotionManager();
+ * void initActionEditor();
  * void executePage(int pageNumber);
  * bool actionRunning();
+ * 
+ * 
  *
  */
 
@@ -79,10 +82,13 @@ MotionController::~MotionController()
 bool MotionController::initMotionManager()
 /* 
  * Initialize the motion manager to control DARwIn-OP. 
- * Return True on success, otherwise return False
+ * Return True on success, otherwise return False. This must be run before 
+ * running either initActionEditor() or initWalking(). It will attempt to 
+ * initialize multiple times before giving up.
  */
 {
-
+    int MAX_ATTEMPTS = 5;
+    int currentAttempt = 0;
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
 
@@ -92,16 +98,31 @@ bool MotionController::initMotionManager()
         return false;
     }
 
-    if(MotionManager::GetInstance()->Initialize(static_cast<CM730*> (cm730)) == false)
+    // Try to initialize multiple times
+    while((currentAttempt < MAX_ATTEMPTS) && (managerInitialized == false))
     {
-        return false; // Report failure to initialize (this isn't terribly uncommon, sometimes needs a retry)
+        if(MotionManager::GetInstance()->Initialize(static_cast<CM730*> (cm730)) == true)
+        {
+            managerInitialized = true; // Mark manager as initialized if successful
+        }
+        else
+        {
+            currentAttempt++;
+            printf("Initialization failed, attempt %i", currentAttempt);
+            usleep(1000000); // Wait before trying to initialize again
+        }
+        
     }
     
-    LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
-    motion_timer->Start(); 
+    // Only start the timer if successfully initialized
+    if (managerInitialized)
+    {
+        LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
+        motion_timer->Start(); 
+    }
     
-    managerInitialized = true; // Mark manager as initialized if successful
-    return true;
+    
+    return managerInitialized;
 }
 
 void MotionController::initActionEditor()
