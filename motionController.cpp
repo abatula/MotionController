@@ -54,7 +54,7 @@
 #define MOTION_FILE_PATH    "/darwin/Data/motion_4096.bin"
 #endif
 
-#define INI_FILE_PATH       "/darwin/Data/config.ini" // FIXME: Do i need this?
+#define INI_FILE_PATH       "/darwin/Data/config.ini"
 
 #define PORT 9930
 #define BUFLEN 70
@@ -63,7 +63,9 @@
 MotionController::MotionController()
 /* Constructor */
 {
-    managerInitialized = false; // Motion manager is initially not initialized
+    managerInitialized = false;         // Motion manager is initially not initialized
+    actionEditorInitialized = false;    // Action editor is initially not initialized
+    walkingInitialized = false;         // Walking is initially not initialized
     linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
     cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
     
@@ -128,57 +130,80 @@ bool MotionController::initMotionManager()
 void MotionController::initActionEditor()
 {
     /*
-     * Set up the action editor module to control DARwIn-OP by running pages
+     * Set up the action editor module to control DARwIn-OP by running pages. 
+     * Make sure that the motion manager has already been initialized first
      */
-    
-    MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
-    MotionManager::GetInstance()->SetEnable(true);
+    if(managerInitialized)
+    {
+        MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+        MotionManager::GetInstance()->SetEnable(true);
+        // Set action editor and walking flags
+        actionEditorInitialized = true;
+        walkingInitialized = false;
+    }
+    else
+    {
+        printf("Motion manager is not initialized. Run initMotionManager() first");
+    }
 }
 
 void MotionController::initWalking()
 {
     /*
-     * Get DARwIn ready for walking
+     * Get DARwIn ready for walking. Make sure motion manager has been 
+     * initialized first.
      */
     
-    minIni* ini = new minIni(INI_FILE_PATH);
-    Walking::GetInstance()->LoadINISettings(ini);
-    
-    MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
-    
-    // Have DARwIn get to walk ready position SLOWLY
-    int n = 0;
-    int param[JointData::NUMBER_OF_JOINTS * 5];
-    int wGoalPosition, wStartPosition, wDistance;
-
-    for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+    if(managerInitialized)
     {
-        wStartPosition = MotionStatus::m_CurrentJoints.GetValue(id);
-        wGoalPosition = Walking::GetInstance()->m_Joint.GetValue(id);
-        if( wStartPosition > wGoalPosition )
-            wDistance = wStartPosition - wGoalPosition;
-        else
-            wDistance = wGoalPosition - wStartPosition;
+        minIni* ini = new minIni(INI_FILE_PATH);
+        Walking::GetInstance()->LoadINISettings(ini);
+        
+        MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
+        
+        // Have DARwIn get to walk ready position SLOWLY
+        int n = 0;
+        int param[JointData::NUMBER_OF_JOINTS * 5];
+        int wGoalPosition, wStartPosition, wDistance;
 
-        wDistance >>= 2;
-        if( wDistance < 8 )
-            wDistance = 8;
+        for(int id=JointData::ID_R_SHOULDER_PITCH; id<JointData::NUMBER_OF_JOINTS; id++)
+        {
+            wStartPosition = MotionStatus::m_CurrentJoints.GetValue(id);
+            wGoalPosition = Walking::GetInstance()->m_Joint.GetValue(id);
+            if( wStartPosition > wGoalPosition )
+                wDistance = wStartPosition - wGoalPosition;
+            else
+                wDistance = wGoalPosition - wStartPosition;
 
-        param[n++] = id;
-        param[n++] = CM730::GetLowByte(wGoalPosition);
-        param[n++] = CM730::GetHighByte(wGoalPosition);
-        param[n++] = CM730::GetLowByte(wDistance);
-        param[n++] = CM730::GetHighByte(wDistance);
+            wDistance >>= 2;
+            if( wDistance < 8 )
+                wDistance = 8;
+
+            param[n++] = id;
+            param[n++] = CM730::GetLowByte(wGoalPosition);
+            param[n++] = CM730::GetHighByte(wGoalPosition);
+            param[n++] = CM730::GetLowByte(wDistance);
+            param[n++] = CM730::GetHighByte(wDistance);
+        }
+        (static_cast<CM730*>(cm730))->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
+        
+        usleep(1000000); // Give DARwIn time to get to the position
+        
+        // Enable walking and the motion manager
+        Walking::GetInstance()->m_Joint.SetEnableBody(true);
+        MotionManager::GetInstance()->SetEnable(true);
+        
+        Walking::GetInstance()->Initialize();
+        
+        // Set action editor and walking flags
+        actionEditorInitialized = false;
+        walkingInitialized = true;
     }
-    (static_cast<CM730*>(cm730))->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
     
-    usleep(1000000); // Give DARwIn time to get to the position
-    
-    // Enable walking and the motion manager
-    Walking::GetInstance()->m_Joint.SetEnableBody(true);
-    MotionManager::GetInstance()->SetEnable(true);
-    
-    Walking::GetInstance()->Initialize();
+    else
+    {
+        printf("Motion manager is not initialized. Run initMotionManager() first");
+    }
 }
 
 void MotionController::executePage(int pageNum)
@@ -186,13 +211,13 @@ void MotionController::executePage(int pageNum)
 {
     
     // start of original
-    if(managerInitialized) // Don't run if the manager is not initialized
+    if(actionEditorInitialized) // Don't run if the manager is not initialized
     {
         Action::GetInstance()->Start(pageNum);
     }
     else
     {
-        printf("Motion manager must be initialized!");
+        printf("Action Editor is not initialized, run initActionEditor()");
     }
 }
 
@@ -213,13 +238,20 @@ void MotionController::walk(double duration, double direction)
  * direction - Walk forward (0), turn left (positive) or turn right (negative)
  */
 {
-    Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
-    Walking::GetInstance()->Start();
-    
-    if(duration >= 0.0)
+    if(walkingInitialized)
     {
-        usleep(duration*1000000);
-        Walking::GetInstance()->Stop();
+        Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
+        Walking::GetInstance()->Start();
+        
+        if(duration >= 0.0)
+        {
+            usleep(duration*1000000);
+            Walking::GetInstance()->Stop();
+        }
+    }
+    else
+    {
+        printf("Walking is not initialized, run initWalking()");
     }
         
 }
@@ -233,14 +265,21 @@ void MotionController::walk(double duration, double direction, double stepSize)
  * stepSize - Size of step to take
  */
 {
-    Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
-    Walking::GetInstance()->X_MOVE_AMPLITUDE = stepSize;
-    Walking::GetInstance()->Start();
-    
-    if(duration >= 0.0)
+    if(walkingInitialized)
     {
-        usleep(duration*1000000);
-        Walking::GetInstance()->Stop();
+        Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
+        Walking::GetInstance()->X_MOVE_AMPLITUDE = stepSize;
+        Walking::GetInstance()->Start();
+        
+        if(duration >= 0.0)
+        {
+            usleep(duration*1000000);
+            Walking::GetInstance()->Stop();
+        }
+    }
+    else
+    {
+        printf("Walking is not initialized, run initWalking()");
     }
         
 }
@@ -250,7 +289,14 @@ void MotionController::stopWalking()
  * Stop walking
  */
 {
-    Walking::GetInstance()->Stop();
+    if(walkingInitialized)
+    {
+        Walking::GetInstance()->Stop();
+    }
+    else
+    {
+        printf("Walking is not initialized, run initWalking()");
+    }
 }
 
 // -------

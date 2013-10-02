@@ -2,6 +2,8 @@
 #define MOTIONCONTROLLER_
 class MotionController {
     bool managerInitialized;
+    bool actionEditorInitialized;
+    bool walkingInitialized;
     void *linux_cm730;
     void *cm730; 
     public:
