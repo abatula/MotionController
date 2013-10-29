@@ -3,9 +3,9 @@ MotionController
 
 Class for high-level control of the DARwIn-OP using the action editor/motion manager.
 
-This code belongs in a subfolder of /darwin/Linux/project/MotionController on the DARwIn-OP. The file motion_1024.bin belongs in the /darwin/Data folder. To compile, run 'make' in the MotionController folder.
+This code belongs in a subfolder of /darwin/Linux/project/MotionController on the DARwIn-OP. 
 
-Any code that runs this may need to be executed from the parent directory (project). It also will probably require sudo privileges. 
+If you have permissions errors (either running in C++ or Python) you may need to run it with sudo for admin privileges. 
 
 System Requirements
 -------------------
@@ -14,4 +14,46 @@ C++ Only
 
 Python wrapper
 * python-dev
-* Cython (for Python wrapper only)
+* Cython
+
+Note that at this time, DARwIn comes with Ubuntu and uses Python2 by default. So all dependencies refer to Python2-compatible versions where applicable. 
+
+Installation
+------------
+
+###C++###
+To compile, run 'make' in the MotionController folder. Then run the example code with:
+
+    ./MotionController
+    
+or, if you need admin privelidges:
+
+    sudo ./MotionController
+
+Modify main.cpp to run your own program to control DARwIn.
+
+###Python###
+To compile/install locally, run:
+
+    python setup.py build_ext --inplace
+    
+or to install system-wide:
+
+    python setup.py build_ext
+    
+To test the installation, run the main.py script:
+
+    python main.py
+    
+or
+
+    sudo python main.py
+
+Modify the main.py file, or write your own to control DARwIn from Python. Just import MotionController and initialize a controller:
+
+    import MotionController
+    controller = MotionController.PyMotionController()
+    
+Then use the methods in the controller object to control the robot.
+
+It should be relatively easy to update this code for Python3 if you choose to install it on your robot, or if future versions come with Python3 out-of-the-box.
