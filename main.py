@@ -15,8 +15,7 @@ except:
 
 if initialized:
     print("Initialized")
-    controller.initActionEditor()
-        
+            
     controller.initWalking()
     time.sleep(1)
     controller.walk(5, 0, 0)
