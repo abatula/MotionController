@@ -8,6 +8,7 @@ controller = MotionController.PyMotionController()
 
 initialized = False
 
+# Try to initialize the motion manager
 try:
     initialized = controller.initMotionManager()
 except:
@@ -15,8 +16,8 @@ except:
 
 if initialized:
     print("Initialized")
-    controller.initActionEditor()
-        
+    
+    # Walking demo        
     controller.initWalking()
     time.sleep(1)
     controller.walk(5, 0, 0)
@@ -31,9 +32,11 @@ if initialized:
     controller.stopWalking()
     time.sleep(2)
     
+    # ActionEditor demo
     controller.initActionEditor()
     controller.executePage(15)
-    
+
+    # Wait for the motion to finish before exiting
     while controller.actionRunning():
         time.sleep(0.5)
 else:
