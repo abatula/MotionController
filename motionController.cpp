@@ -310,9 +310,14 @@ void MotionController::changeCurrentDir()
 
 void MotionController::sighandler(int sig)
 {
-    /* Signal handling */
+    /* 
+    * Signal handling 
+    *   
+    * Sit down if the process is ended
+    */
     struct termios term;
-    Action::GetInstance()->Start(1);    /* Init(stand up) pose */
+    Action::GetInstance()->Start(15);    // Sit Down  
+    while(Action::GetInstance()->IsRunning()) usleep(8*1000) // Wait until the motion has finished
     tcgetattr( STDIN_FILENO, &term );
     term.c_lflag |= ICANON | ECHO;
     tcsetattr( STDIN_FILENO, TCSANOW, &term );
