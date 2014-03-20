@@ -123,6 +123,15 @@ bool MotionController::initMotionManager()
         motion_timer->Start(); 
     }
     
+    // Initialize to the start position
+    minIni* ini = new minIni(INI_FILE_PATH);
+
+    MotionManager::GetInstance()->LoadINISettings(ini);
+    Action::GetInstance()->m_Joint.SetEnableBody(true, true);
+    MotionManager::GetInstance()->SetEnable(true);
+
+    Action::GetInstance()->Start(15) // Go to the sitting position
+    while(Action::GetInstance()->IsRunning()) usleep(8*1000);
     
     return managerInitialized;
 }
