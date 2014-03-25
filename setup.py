@@ -9,11 +9,11 @@ setup(name='MotionController',
       author_email='batulaa@drexel.edu',
       url='https://github.com/abatula/MotionController',
       ext_modules=[
-            Extension('MotionController', ['MotionController.pyx', 'motionController.cpp'], 
+            Extension('MotionController', ['MotionController.pyx', 'motionController.cpp'],
                 language='c++',
-                extra_objects=['/darwin/Linux/lib/darwin.a'],
-                libraries=['jpeg', 'rt'],
-                include_dirs=['/darwin/Framework/include', '/darwin/Linux/include',]
+                extra_objects=['/darwin/Linux/lib/darwin.a'], # Pass the Robotis darwin.a library to the linker (not supposed to add an extension, unsure if I need it or why)
+                libraries=['jpeg', 'rt'], # Link with the jpeg and rt libraries
+                include_dirs=['/darwin/Framework/include', '/darwin/Linux/include',] # Include DARwIn-OP files from Robotis
                 )
             ],
       cmdclass={'build_ext':build_ext}
