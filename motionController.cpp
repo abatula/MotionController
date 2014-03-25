@@ -227,12 +227,27 @@ void MotionController::initHead()
     {
       MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
       MotionManager::GetInstance()->SetEnable(true);
+      Head::GetInstance()->LoadINISettings(ini);
+      Head::GetInstance()->Initialize();
       headInitialized = true;
     }
     
   else
     {
       printf("Motion manager is not initialized. Run initMotionManager() first");
+    }
+}
+
+void MoveHeadToHome()
+/* Move head to home position via MoveToHome() function in Head class */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      Head::GetInstance()->MoveToHome();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
     }
 }
 
@@ -278,6 +293,61 @@ void MoveHeadByOffset(double pan, double tilt)
     }
 }
 
+double MotionController::getHeadTopLimitAngle()
+/* Get the top angle limit for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetTopLimitAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
+
+double MotionController::getHeadBottomLimitAngle()
+/* Get the bottom angle limit for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetBottomLimitAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
+
+double MotionController::getHeadLeftLimitAngle()
+/* Get the left angle limit for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetLeftLimitAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
+
+double MotionController::getHeadRightLimitAngle()
+/* Get the top angle limit for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetRightLimitAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
 
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
