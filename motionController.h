@@ -1,5 +1,5 @@
 #ifndef MOTIONCONTROLLER__
-#define MOTIONCONTROLLER_
+#define MOTIONCONTROLLER__
 class MotionController {
     bool managerInitialized;
     bool actionEditorInitialized;
