@@ -165,7 +165,6 @@ void MotionController::initWalking()
     
     if(managerInitialized)
     {
-        minIni* ini = new minIni(INI_FILE_PATH);
         Walking::GetInstance()->LoadINISettings(ini);
         
         MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
