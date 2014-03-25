@@ -66,6 +66,7 @@ MotionController::MotionController()
   managerInitialized = false;         // Motion manager is initially not initialized
   actionEditorInitialized = false;    // Action editor is initially not initialized
   walkingInitialized = false;         // Walking is initially not initialized
+  headInitialized = false;	      // Head is initially not initialized
   linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
   cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
     
@@ -226,6 +227,7 @@ void MotionController::initHead()
     {
       MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
       MotionManager::GetInstance()->SetEnable(true);
+      headInitialized = true;
     }
     
   else

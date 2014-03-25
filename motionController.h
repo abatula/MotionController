@@ -4,6 +4,7 @@ class MotionController {
     bool managerInitialized;
     bool actionEditorInitialized;
     bool walkingInitialized;
+    bool headInitialized;
     void *linux_cm730;
     void *cm730; 
     public:
