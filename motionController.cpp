@@ -198,8 +198,9 @@ void MotionController::initWalking()
         usleep(1000000); // Give DARwIn time to get to the position
         
         // Enable walking and the motion manager
-        Walking::GetInstance()->m_Joint.SetEnableBody(true);
-        MotionManager::GetInstance()->SetEnable(true);
+        // Walking::GetInstance()->m_Joint.SetEnableBody(true);
+        // MotionManager::GetInstance()->SetEnable(true);
+	// TODO: Do I need the previous two lines?
         
         Walking::GetInstance()->Initialize();
         
