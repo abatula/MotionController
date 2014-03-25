@@ -13,11 +13,20 @@ class MotionController {
         bool initMotionManager();
         void initActionEditor();
         void initWalking();
+	void initHead();
         void executePage(int);
         bool actionRunning();
         void walk(double, double);
         void walk(double, double, double);
         void stopWalking();
+	double getHeadTopLimitAngle();
+	double getHeadBottomLimitAngle();
+	double getHeadLeftLimitAngle();
+	double getHeadRightLimitAngle();
+	void moveHeadToHome();
+	void moveHeadByAngle(double, double);
+	void moveHeadByOffset(double, double);
+	
     protected:
         static void changeCurrentDir();
         static void sighandler(int);
