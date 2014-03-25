@@ -257,6 +257,27 @@ void MoveHeadByAngle(double pan, double tilt)
     }
 }
 
+void MoveHeadByOffset(double pan, double tilt)
+/* 
+ * Move the head by the specified pan and tilt angle offsets from the current position
+ *
+ * Call the MoveByOffset function in the Head class
+ *
+ * INPUT:
+ *    pan  - Pan angle offset
+ *    tilt - tilt angle offset
+ */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      Head::GetInstance()->MoveByOffset(pan, tilt);
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+    }
+}
+
 
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
