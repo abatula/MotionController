@@ -238,7 +238,7 @@ void MotionController::initHead()
     }
 }
 
-void MoveHeadToHome()
+void MotionController::moveHeadToHome()
 /* Move head to home position via MoveToHome() function in Head class */
 {
   if(headInitialized)		// Don't run if head is not initialized
@@ -251,7 +251,7 @@ void MoveHeadToHome()
     }
 }
 
-void MoveHeadByAngle(double pan, double tilt)
+void MotionController::moveHeadByAngle(double pan, double tilt)
 /* 
  * Move the head to the specified pan and tilt angles 
  *
@@ -272,7 +272,7 @@ void MoveHeadByAngle(double pan, double tilt)
     }
 }
 
-void MoveHeadByOffset(double pan, double tilt)
+void MotionController::moveHeadByOffset(double pan, double tilt)
 /* 
  * Move the head by the specified pan and tilt angle offsets from the current position
  *
