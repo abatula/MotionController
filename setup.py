@@ -8,14 +8,14 @@ setup(name='MotionController',
       author='Alyssa Batula',
       author_email='batulaa@drexel.edu',
       url='https://github.com/abatula/MotionController',
-      ext_modules=[Extension('MotionController', ['MotionController.pyx', 'motionController.cpp'], 
-                             language='c++',
-                             extra_objects=['/darwin/Linux/lib/darwin.a'],
-                             libraries=['jpeg', 'rt'],
-                             include_dirs=['/darwin/Framework/include',
-                                            '/darwin/Linux/include',
-                                           ]
-                             )],
+      ext_modules=[
+            Extension('MotionController', ['MotionController.pyx', 'motionController.cpp'], 
+                language='c++',
+                extra_objects=['/darwin/Linux/lib/darwin.a'],
+                libraries=['jpeg', 'rt'],
+                include_dirs=['/darwin/Framework/include', '/darwin/Linux/include',]
+                )
+            ],
       cmdclass={'build_ext':build_ext}
       )
       
