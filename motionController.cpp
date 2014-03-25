@@ -32,11 +32,11 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-// Do I need these 3?
+// Do I need these 2?
 #include "Point.h"
 #include "mjpg_streamer.h"
-#include "minIni.h"
 
+#include "minIni.h"
 #include "Action.h"
 #include "Head.h"
 #include "Walking.h"
