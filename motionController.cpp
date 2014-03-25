@@ -236,6 +236,28 @@ void MotionController::initHead()
     }
 }
 
+void MoveHeadByAngle(double pan, double tilt)
+/* 
+ * Move the head to the specified pan and tilt angles 
+ *
+ * Call the MoveByAngle function in the Head class
+ *
+ * INPUT:
+ *    pan  - Pan angle
+ *    tilt - tilt angle
+ */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      Head::GetInstance()->MoveByAngle(pan, tilt);
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+    }
+}
+
+
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
 {
