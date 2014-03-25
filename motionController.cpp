@@ -85,7 +85,7 @@ bool MotionController::initMotionManager()
 /* 
  * Initialize the motion manager to control DARwIn-OP. 
  * Return True on success, otherwise return False. This must be run before 
- * running either initActionEditor() or initWalking(). It will attempt to 
+ * running either initActionEditor(), initHead(), or initWalking(). It will attempt to 
  * initialize multiple times before giving up.
  */
 {
@@ -211,6 +211,25 @@ void MotionController::initWalking()
     else
     {
         printf("Motion manager is not initialized. Run initMotionManager() first");
+    }
+}
+
+void MotionController::initHead()
+{
+  /*
+   * Get DARwIn ready for head movement. Make sure motion manager has been 
+   * initialized first.
+   */
+    
+  if(managerInitialized)
+    {
+      MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
+      MotionManager::GetInstance()->SetEnable(true);
+    }
+    
+  else
+    {
+      printf("Motion manager is not initialized. Run initMotionManager() first");
     }
 }
 
