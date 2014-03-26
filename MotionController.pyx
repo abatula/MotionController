@@ -57,3 +57,12 @@ cdef class PyMotionController:
         pan = self.thisptr.getHeadPanAngle()
 	tilt = self.thisptr.getHeadTiltAngle()
 	return (pan,tilt)
+    def moveHeadToHome():
+        self.thisptr.moveHeadToHome()
+    def moveHead(pan, tilt, mode='direct'):
+        if mode == 'direct':
+	    self.thisptr.moveHeadByAngle(pan, tilt)
+	elif move == 'offset':
+	    self.thisptr.moveHeadByOffset(pan, tilt)
+	else:
+	    print('Invalid option ' + mode + ' for moveHead')
