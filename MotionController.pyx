@@ -14,6 +14,15 @@ cdef extern from "motionController.h":
         void walk(double,double)
         void walk(double,double,double)
         void stopWalking()
+	double getHeadTopLimitAngle()
+	double getHeadBottomLimitAngle()
+	double getHeadLeftLimitAngle()
+	double getHeadRightLimitAngle()
+	double getHeadPanAngle()
+	double getHeadTiltAngle()
+	void moveHeadToHome()
+	void moveHeadByAngle(double, double)
+	void moveHeadByOffset(double, double)
         
 cdef class PyMotionController:
     cdef MotionController *thisptr
@@ -38,3 +47,9 @@ cdef class PyMotionController:
             self.thisptr.walk(duration, direction, stepSize)
     def stopWalking(self):
         self.thisptr.stopWalking()
+    def getHeadAngleLimits():
+        top = self.thisptr.getHeadTopLimitAngle()
+	bottom = self.thisptr.getHeadBottomLimitAngle()
+	left = self.thisptr.getHeadLeftLimitAngle()
+	right = self.thisptr.getHeadRightLimitAngle()
+	return(top,bottom,left,right)
