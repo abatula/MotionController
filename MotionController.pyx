@@ -53,3 +53,7 @@ cdef class PyMotionController:
 	left = self.thisptr.getHeadLeftLimitAngle()
 	right = self.thisptr.getHeadRightLimitAngle()
 	return(top,bottom,left,right)
+    def getHeadPanTiltAngles():
+        pan = self.thisptr.getHeadPanAngle()
+	tilt = self.thisptr.getHeadTiltAngle()
+	return (pan,tilt)
