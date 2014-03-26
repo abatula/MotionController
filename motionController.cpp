@@ -349,6 +349,34 @@ double MotionController::getHeadRightLimitAngle()
     }
 }
 
+double MotionController::getHeadPanAngle()
+/* Get the current pan angle for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetPanAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
+
+double MotionController::getHeadTiltAngle()
+/* Get the current tilt  angle for the head */
+{
+  if(headInitialized)		// Don't run if head is not initialized
+    {
+      return Head::GetInstance()->GetTiltAngle();
+    }
+  else
+    {
+      printf("Head is not initialized, run initHead()");
+      return 0.0;
+    }
+}
+
 void MotionController::executePage(int pageNum)
 /* Execute the specified page number in the action editor */
 {

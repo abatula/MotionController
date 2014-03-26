@@ -23,6 +23,8 @@ class MotionController {
 	double getHeadBottomLimitAngle();
 	double getHeadLeftLimitAngle();
 	double getHeadRightLimitAngle();
+	double getHeadPanAngle();
+	double getHeadTiltAngle();
 	void moveHeadToHome();
 	void moveHeadByAngle(double, double);
 	void moveHeadByOffset(double, double);
