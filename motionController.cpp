@@ -286,7 +286,7 @@ void MotionController::moveHeadByOffset(double pan, double tilt)
 {
   if(headInitialized)		// Don't run if head is not initialized
     {
-      Head::GetInstance()->MoveByOffset(pan, tilt);
+      Head::GetInstance()->MoveByAngleOffset(pan, tilt);
     }
   else
     {
