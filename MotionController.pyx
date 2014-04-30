@@ -14,15 +14,15 @@ cdef extern from "motionController.h": # Make class definition available
         void walk(double,double)
         void walk(double,double,double)
         void stopWalking()
-	double getHeadTopLimitAngle()
-	double getHeadBottomLimitAngle()
-	double getHeadLeftLimitAngle()
-	double getHeadRightLimitAngle()
-	double getHeadPanAngle()
-	double getHeadTiltAngle()
-	void moveHeadToHome()
-	void moveHeadByAngle(double, double)
-	void moveHeadByOffset(double, double)
+        double getHeadTopLimitAngle()
+        double getHeadBottomLimitAngle()
+        double getHeadLeftLimitAngle()
+        double getHeadRightLimitAngle()
+        double getHeadPanAngle()
+        double getHeadTiltAngle()
+        void moveHeadToHome()
+        void moveHeadByAngle(double, double)
+        void moveHeadByOffset(double, double)
 
 # Create the Python wrapper class
 cdef class PyMotionController:
@@ -48,22 +48,22 @@ cdef class PyMotionController:
             self.thisptr.walk(duration, direction, stepSize)
     def stopWalking(self):
         self.thisptr.stopWalking()
-    def getHeadAngleLimits():
+    def getHeadAngleLimits(self):
         top = self.thisptr.getHeadTopLimitAngle()
-	bottom = self.thisptr.getHeadBottomLimitAngle()
-	left = self.thisptr.getHeadLeftLimitAngle()
-	right = self.thisptr.getHeadRightLimitAngle()
-	return(top,bottom,left,right)
-    def getHeadPanTiltAngles():
+        bottom = self.thisptr.getHeadBottomLimitAngle()
+        left = self.thisptr.getHeadLeftLimitAngle()
+        right = self.thisptr.getHeadRightLimitAngle()
+        return(top,bottom,left,right)
+    def getHeadPanTiltAngles(self):
         pan = self.thisptr.getHeadPanAngle()
-	tilt = self.thisptr.getHeadTiltAngle()
-	return (pan,tilt)
-    def moveHeadToHome():
+        tilt = self.thisptr.getHeadTiltAngle()
+        return (pan,tilt)
+    def moveHeadToHome(self):
         self.thisptr.moveHeadToHome()
-    def moveHead(pan, tilt, mode='direct'):
+    def moveHead(self, pan, tilt, mode='direct'):
         if mode == 'direct':
-	    self.thisptr.moveHeadByAngle(pan, tilt)
-	elif move == 'offset':
-	    self.thisptr.moveHeadByOffset(pan, tilt)
-	else:
-	    print('Invalid option ' + mode + ' for moveHead')
+            self.thisptr.moveHeadByAngle(pan, tilt)
+        elif mode == 'offset':
+            self.thisptr.moveHeadByOffset(pan, tilt)
+        else:
+            print('Invalid option ' + mode + ' for moveHead')
