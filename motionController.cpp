@@ -32,11 +32,11 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-// Do I need these 3?
+// Do I need these 2?
 #include "Point.h"
 #include "mjpg_streamer.h"
-#include "minIni.h"
 
+#include "minIni.h"
 #include "Action.h"
 #include "Head.h"
 #include "Walking.h"
@@ -91,6 +91,7 @@ bool MotionController::initMotionManager()
 {
     int MAX_ATTEMPTS = 5;
     int currentAttempt = 0;
+    
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
 
@@ -123,6 +124,12 @@ bool MotionController::initMotionManager()
         motion_timer->Start(); 
     }
     
+    // Initialize to the start position
+    minIni* ini = new minIni(INI_FILE_PATH);
+
+    MotionManager::GetInstance()->LoadINISettings(ini);
+    Action::GetInstance()->m_Joint.SetEnableBody(true, true);
+    MotionManager::GetInstance()->SetEnable(true);
     
     return managerInitialized;
 }
@@ -135,11 +142,14 @@ void MotionController::initActionEditor()
      */
     if(managerInitialized)
     {
-        MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
-        MotionManager::GetInstance()->SetEnable(true);
-        // Set action editor and walking flags
-        actionEditorInitialized = true;
-        walkingInitialized = false;
+        if(actionEditorInitialized == false)
+        {
+            MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+            MotionManager::GetInstance()->SetEnable(true);
+            // Set action editor flag
+            actionEditorInitialized = true;
+        }
+
     }
     else
     {
@@ -195,8 +205,7 @@ void MotionController::initWalking()
         
         Walking::GetInstance()->Initialize();
         
-        // Set action editor and walking flags
-        actionEditorInitialized = false;
+        // Set walking flag
         walkingInitialized = true;
     }
     
@@ -310,9 +319,11 @@ void MotionController::changeCurrentDir()
 
 void MotionController::sighandler(int sig)
 {
-    /* Signal handling */
+    /* 
+    * Signal handling 
+    *   
+    */
     struct termios term;
-    Action::GetInstance()->Start(1);    /* Init(stand up) pose */
     tcgetattr( STDIN_FILENO, &term );
     term.c_lflag |= ICANON | ECHO;
     tcsetattr( STDIN_FILENO, TCSANOW, &term );
