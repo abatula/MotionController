@@ -142,11 +142,13 @@ void MotionController::initActionEditor()
      */
     if(managerInitialized)
     {
-        MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
-        MotionManager::GetInstance()->SetEnable(true);
-        // Set action editor and walking flags
-        actionEditorInitialized = true;
-        walkingInitialized = false;
+        if(actionEditorInitialized == false)
+        {
+            MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+            MotionManager::GetInstance()->SetEnable(true);
+            // Set action editor flag
+            actionEditorInitialized = true;
+        }
 
     }
     else
@@ -203,8 +205,7 @@ void MotionController::initWalking()
         
         Walking::GetInstance()->Initialize();
         
-        // Set action editor and walking flags
-        actionEditorInitialized = false;
+        // Set walking flag
         walkingInitialized = true;
     }
     
