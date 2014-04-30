@@ -225,10 +225,16 @@ void MotionController::initHead()
     
   if(managerInitialized)
     {
+      
       MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
-      MotionManager::GetInstance()->SetEnable(true);
       Head::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
+      MotionStatus::m_CurrentJoints.SetEnableBody(false);
+      MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
       Head::GetInstance()->Initialize();
+      
+      
+        
+      MotionManager::GetInstance()->SetEnable(true);
       headInitialized = true;
     }
     
