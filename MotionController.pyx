@@ -9,6 +9,7 @@ cdef extern from "motionController.h": # Make class definition available
         bool initMotionManager()
         void initActionEditor()
         void initWalking()
+        void initHead()
         void executePage(int)
         bool actionRunning()
         void walk(double,double)
@@ -37,6 +38,8 @@ cdef class PyMotionController:
         self.thisptr.initActionEditor()
     def initWalking(self):
         self.thisptr.initWalking()
+    def initHead(self):
+        self.thisptr.initHead()
     def executePage(self, pageNum):
         self.thisptr.executePage(pageNum)
     def actionRunning(self):
