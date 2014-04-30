@@ -228,12 +228,8 @@ void MotionController::initHead()
       
       MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
       Head::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
-      MotionStatus::m_CurrentJoints.SetEnableBody(false);
-      MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
       Head::GetInstance()->Initialize();
       
-      
-        
       MotionManager::GetInstance()->SetEnable(true);
       headInitialized = true;
     }
@@ -249,6 +245,8 @@ void MotionController::moveHeadToHome()
 {
   if(headInitialized)		// Don't run if head is not initialized
     {
+      MotionStatus::m_CurrentJoints.SetEnableBody(false);
+      MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
       Head::GetInstance()->MoveToHome();
     }
   else
@@ -270,7 +268,9 @@ void MotionController::moveHeadByAngle(double pan, double tilt)
 {
   if(headInitialized)		// Don't run if head is not initialized
     {
-      Head::GetInstance()->MoveByAngle(pan, tilt);
+        MotionStatus::m_CurrentJoints.SetEnableBody(false);
+        MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
+        Head::GetInstance()->MoveByAngle(pan, tilt);
     }
   else
     {
@@ -291,7 +291,9 @@ void MotionController::moveHeadByOffset(double pan, double tilt)
 {
   if(headInitialized)		// Don't run if head is not initialized
     {
-      Head::GetInstance()->MoveByAngleOffset(pan, tilt);
+        MotionStatus::m_CurrentJoints.SetEnableBody(false);
+        MotionStatus::m_CurrentJoints.SetEnableHeadOnly(true);
+        Head::GetInstance()->MoveByAngleOffset(pan, tilt);
     }
   else
     {
@@ -390,6 +392,7 @@ void MotionController::executePage(int pageNum)
   // start of original
   if(actionEditorInitialized) // Don't run if the manager is not initialized
     {
+      MotionStatus::m_CurrentJoints.SetEnableBody(true);
       Action::GetInstance()->Start(pageNum);
     }
   else
@@ -417,6 +420,12 @@ void MotionController::walk(double duration, double direction)
 {
   if(walkingInitialized)
     {
+      // Make sure lower body is enabled, but don't move the head if the head control is initialized
+      MotionStatus::m_CurrentJoints.SetEnableBody(true);
+      if(headInitialized)
+      {
+          Walking::GetInstance()->m_Joint.SetEnableHeadOnly(false);
+      }
       Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
       Walking::GetInstance()->Start();
         
@@ -444,6 +453,12 @@ void MotionController::walk(double duration, double direction, double stepSize)
 {
   if(walkingInitialized)
     {
+      // Make sure lower body is enabled, but don't move the head if the head control is initialized
+      MotionStatus::m_CurrentJoints.SetEnableBody(true);
+      if(headInitialized)
+      {
+          Walking::GetInstance()->m_Joint.SetEnableHeadOnly(false);
+      }
       Walking::GetInstance()->A_MOVE_AMPLITUDE = direction;
       Walking::GetInstance()->X_MOVE_AMPLITUDE = stepSize;
       Walking::GetInstance()->Start();
@@ -468,6 +483,12 @@ void MotionController::stopWalking()
 {
   if(walkingInitialized)
     {
+      // Make sure lower body is enabled, but don't move the head if the head control is initialized
+      MotionStatus::m_CurrentJoints.SetEnableBody(true);
+      if(headInitialized)
+      {
+          Walking::GetInstance()->m_Joint.SetEnableHeadOnly(false);
+      }
       Walking::GetInstance()->Stop();
     }
   else

@@ -17,41 +17,41 @@ except:
 if initialized:
     print("Initialized")
     
-    ## Walking demo        
-    #controller.initWalking()
-    #time.sleep(1)
-    #controller.walk(5, 0, 0)
-    #time.sleep(1)
-    #controller.walk(5, 10)
-    #time.sleep(1)
-    #controller.walk(5, -10)
-    #time.sleep(1)
-    #controller.walk(-1, 0, 2)
+    # Walking demo        
+    controller.initWalking()
+    time.sleep(1)
+    controller.walk(5, 0, 0)
+    time.sleep(1)
+    controller.walk(5, 10)
+    time.sleep(1)
+    controller.walk(5, -10)
+    time.sleep(1)
+    controller.walk(-1, 0, 2)
     
-    #time.sleep(5)
-    #controller.stopWalking()
-    #time.sleep(2)
+    time.sleep(5)
+    controller.stopWalking()
+    time.sleep(2)
     
-    ## ActionEditor demo
-    #controller.initActionEditor()
-    #time.sleep(0.5)
-    #controller.executePage(15)
+    # ActionEditor demo
+    controller.initActionEditor()
+    time.sleep(0.5)
+    controller.executePage(15)
 
-    ## Wait for the motion to finish before exiting
-    #while controller.actionRunning():
-        #time.sleep(0.5)
+    # Wait for the motion to finish before exiting
+    while controller.actionRunning():
+        time.sleep(0.5)
         
-    #controller.executePage(1)
+    controller.executePage(1)
 
-    ## Wait for the motion to finish before exiting
-    #while controller.actionRunning():
-        #time.sleep(0.5)
+    # Wait for the motion to finish before exiting
+    while controller.actionRunning():
+        time.sleep(0.5)
         
-    #controller.executePage(15)
+    controller.executePage(15)
 
-    ## Wait for the motion to finish before exiting
-    #while controller.actionRunning():
-        #time.sleep(0.5)
+    # Wait for the motion to finish before exiting
+    while controller.actionRunning():
+        time.sleep(0.5)
         
     # Head demo
     controller.initHead()
@@ -66,8 +66,11 @@ if initialized:
     (p,t) = controller.getHeadPanTiltAngles()
     print('\nPan = %d\nTilt = %d' % (p,t))
     
+    
+    # Walk, then move head
     controller.initWalking()
     time.sleep(1)
+    controller.moveHead(20, -10, mode='direct')
     controller.walk(5, 0, 0)
     time.sleep(1)
     
