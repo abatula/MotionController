@@ -126,9 +126,9 @@ bool MotionController::initMotionManager()
     }
     
   // Initialize to the start position
-  minIni* ini = new minIni(INI_FILE_PATH);
+  ini = new minIni(INI_FILE_PATH);
 
-  MotionManager::GetInstance()->LoadINISettings(ini);
+  MotionManager::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
   Action::GetInstance()->m_Joint.SetEnableBody(true, true);
   MotionManager::GetInstance()->SetEnable(true);
 
@@ -168,7 +168,7 @@ void MotionController::initWalking()
     
   if(managerInitialized)
     {
-      Walking::GetInstance()->LoadINISettings(ini);
+      Walking::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
         
       MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
         
@@ -228,7 +228,7 @@ void MotionController::initHead()
     {
       MotionManager::GetInstance()->AddModule((MotionModule*)Head::GetInstance());
       MotionManager::GetInstance()->SetEnable(true);
-      Head::GetInstance()->LoadINISettings(ini);
+      Head::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
       Head::GetInstance()->Initialize();
       headInitialized = true;
     }

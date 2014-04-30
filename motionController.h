@@ -7,6 +7,7 @@ class MotionController {
     bool headInitialized;
     void *linux_cm730;
     void *cm730; 
+    void *ini;
     public:
         MotionController();
         ~MotionController();
