@@ -90,10 +90,11 @@ bool MotionController::initMotionManager()
  * initialize multiple times before giving up.
  */
 {
-  int MAX_ATTEMPTS = 5;
-  int currentAttempt = 0;
-  // FIXME: I'm not sure this does anything
-  MotionController::changeCurrentDir(); 
+    int MAX_ATTEMPTS = 5;
+    int currentAttempt = 0;
+    
+    // FIXME: I'm not sure this does anything
+    MotionController::changeCurrentDir(); 
 
   if(Action::GetInstance()->LoadFile(MOTION_FILE_PATH) == false)
     {
@@ -131,8 +132,6 @@ bool MotionController::initMotionManager()
   Action::GetInstance()->m_Joint.SetEnableBody(true, true);
   MotionManager::GetInstance()->SetEnable(true);
 
-  Action::GetInstance()->Start(15) // Go to the sitting position
-    while(Action::GetInstance()->IsRunning()) usleep(8*1000);
     
   return managerInitialized;
 }
@@ -145,11 +144,14 @@ void MotionController::initActionEditor()
    */
   if(managerInitialized)
     {
-      MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
-      MotionManager::GetInstance()->SetEnable(true);
-      // Set action editor and walking flags
-      actionEditorInitialized = true;
-      walkingInitialized = false;
+        if(actionEditorInitialized == false)
+        {
+            MotionManager::GetInstance()->AddModule((MotionModule*)Action::GetInstance());
+            MotionManager::GetInstance()->SetEnable(true);
+            // Set action editor flag
+            actionEditorInitialized = true;
+        }
+
     }
   else
     {
@@ -205,8 +207,7 @@ void MotionController::initWalking()
         
       Walking::GetInstance()->Initialize();
         
-      // Set action editor and walking flags
-      actionEditorInitialized = false;
+      // Set walking flag
       walkingInitialized = true;
     }
     
@@ -481,19 +482,16 @@ void MotionController::changeCurrentDir()
 
 void MotionController::sighandler(int sig)
 {
-  /* 
-   * Signal handling 
-   *   
-   * Sit down if the process is ended
-   */
-  struct termios term;
-  Action::GetInstance()->Start(15);    // Sit Down  
-  while(Action::GetInstance()->IsRunning()) usleep(8*1000) // Wait until the motion has finished
-					      tcgetattr( STDIN_FILENO, &term );
-  term.c_lflag |= ICANON | ECHO;
-  tcsetattr( STDIN_FILENO, TCSANOW, &term );
+    /* 
+    * Signal handling 
+    *   
+    */
+    struct termios term;
+    tcgetattr( STDIN_FILENO, &term );
+    term.c_lflag |= ICANON | ECHO;
+    tcsetattr( STDIN_FILENO, TCSANOW, &term );
 
-  exit(0);
+    exit(0);
 }
 
 

@@ -34,6 +34,19 @@ if initialized:
     
     # ActionEditor demo
     controller.initActionEditor()
+    time.sleep(0.5)
+    controller.executePage(15)
+
+    # Wait for the motion to finish before exiting
+    while controller.actionRunning():
+        time.sleep(0.5)
+        
+    controller.executePage(1)
+
+    # Wait for the motion to finish before exiting
+    while controller.actionRunning():
+        time.sleep(0.5)
+        
     controller.executePage(15)
 
     # Wait for the motion to finish before exiting

@@ -3,9 +3,9 @@
 
 from libcpp cimport bool
 
-cdef extern from "motionController.h":
-    cdef cppclass MotionController:
-        MotionController() except +
+cdef extern from "motionController.h": # Make class definition available
+    cdef cppclass MotionController:    # Add the C++ class
+        MotionController() except +    # Allow Cython to raise Python error if one occurs
         bool initMotionManager()
         void initActionEditor()
         void initWalking()
@@ -23,9 +23,10 @@ cdef extern from "motionController.h":
 	void moveHeadToHome()
 	void moveHeadByAngle(double, double)
 	void moveHeadByOffset(double, double)
-        
+
+# Create the Python wrapper class
 cdef class PyMotionController:
-    cdef MotionController *thisptr
+    cdef MotionController *thisptr # Create a C++ pointer to the MotionController object
     def __cinit__(self):
         self.thisptr = new MotionController()
     def __dealloc__(self):
