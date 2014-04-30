@@ -91,6 +91,7 @@ bool MotionController::initMotionManager()
 {
     int MAX_ATTEMPTS = 5;
     int currentAttempt = 0;
+    
     // FIXME: I'm not sure this does anything
     MotionController::changeCurrentDir(); 
 
@@ -129,9 +130,6 @@ bool MotionController::initMotionManager()
     MotionManager::GetInstance()->LoadINISettings(ini);
     Action::GetInstance()->m_Joint.SetEnableBody(true, true);
     MotionManager::GetInstance()->SetEnable(true);
-
-    Action::GetInstance()->Start(15) // Go to the sitting position
-    while(Action::GetInstance()->IsRunning()) usleep(8*1000);
     
     return managerInitialized;
 }
@@ -149,6 +147,7 @@ void MotionController::initActionEditor()
         // Set action editor and walking flags
         actionEditorInitialized = true;
         walkingInitialized = false;
+
     }
     else
     {
@@ -322,11 +321,8 @@ void MotionController::sighandler(int sig)
     /* 
     * Signal handling 
     *   
-    * Sit down if the process is ended
     */
     struct termios term;
-    Action::GetInstance()->Start(15);    // Sit Down  
-    while(Action::GetInstance()->IsRunning()) usleep(8*1000) // Wait until the motion has finished
     tcgetattr( STDIN_FILENO, &term );
     term.c_lflag |= ICANON | ECHO;
     tcsetattr( STDIN_FILENO, TCSANOW, &term );
