@@ -43,6 +43,22 @@ int main(void)
             usleep(1000000);
             motionRunning = controller->actionRunning();
         }
+        
+        controller->executePage(1);
+        motionRunning = controller->actionRunning();     
+        while(motionRunning)
+        {
+            usleep(1000000);
+            motionRunning = controller->actionRunning();
+        }
+        
+        controller->executePage(15);
+        motionRunning = controller->actionRunning();     
+        while(motionRunning)
+        {
+            usleep(1000000);
+            motionRunning = controller->actionRunning();
+        }
 //             
         
     }
