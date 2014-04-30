@@ -69,6 +69,7 @@ MotionController::MotionController()
   headInitialized = false;	      // Head is initially not initialized
   linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
   cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
+  ini = new minIni(INI_FILE_PATH);
     
   // Set up signal handlers
   signal(SIGABRT, &MotionController::sighandler);
@@ -126,8 +127,6 @@ bool MotionController::initMotionManager()
     }
     
   // Initialize to the start position
-  ini = new minIni(INI_FILE_PATH);
-
   MotionManager::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
   Action::GetInstance()->m_Joint.SetEnableBody(true, true);
   MotionManager::GetInstance()->SetEnable(true);
