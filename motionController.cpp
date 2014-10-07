@@ -2,18 +2,18 @@
  * MotionController.cpp
  * Author:      Alyssa Batula
  *
- * Description: 
- * This class allows high level access and control of DARwIn-OP's movements 
- * through a motion controller object. This code supports using either the 
+ * Description:
+ * This class allows high level access and control of DARwIn-OP's movements
+ * through a motion controller object. This code supports using either the
  * motion manager for pre-programmed motions or the walking manager.
- * 
+ *
  * Examples:
  * bool initMotionManager();
  * void initActionEditor();
  * void executePage(int pageNumber);
  * bool actionRunning();
- * 
- * 
+ *
+ *
  *
  */
 
@@ -70,7 +70,7 @@ MotionController::MotionController()
   linux_cm730 = new LinuxCM730("/dev/ttyUSB0"); // Create objects for linux CM730 controller
   cm730 = new CM730(static_cast<LinuxCM730*> (linux_cm730));     // Create new object for CM730 controller
   ini = new minIni(INI_FILE_PATH);
-    
+
   // Set up signal handlers
   signal(SIGABRT, &MotionController::sighandler);
   signal(SIGTERM, &MotionController::sighandler);
@@ -84,18 +84,18 @@ MotionController::~MotionController()
 }
 
 bool MotionController::initMotionManager()
-/* 
- * Initialize the motion manager to control DARwIn-OP. 
- * Return True on success, otherwise return False. This must be run before 
- * running either initActionEditor(), initHead(), or initWalking(). It will attempt to 
+/*
+ * Initialize the motion manager to control DARwIn-OP.
+ * Return True on success, otherwise return False. This must be run before
+ * running either initActionEditor(), initHead(), or initWalking(). It will attempt to
  * initialize multiple times before giving up.
  */
 {
     int MAX_ATTEMPTS = 5;
     int currentAttempt = 0;
-    
+
     // FIXME: I'm not sure this does anything
-    MotionController::changeCurrentDir(); 
+    MotionController::changeCurrentDir();
 
   if(Action::GetInstance()->LoadFile(MOTION_FILE_PATH) == false)
     {
@@ -116,29 +116,28 @@ bool MotionController::initMotionManager()
 	  printf("Initialization failed, attempt %i", currentAttempt);
 	  usleep(1000000); // Wait before trying to initialize again
         }
-        
+
     }
-    
+
   // Only start the timer if successfully initialized
   if (managerInitialized)
     {
       LinuxMotionTimer *motion_timer = new LinuxMotionTimer(MotionManager::GetInstance());
-      motion_timer->Start(); 
+      motion_timer->Start();
     }
-    
+
   // Initialize to the start position
   MotionManager::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
   Action::GetInstance()->m_Joint.SetEnableBody(true, true);
   MotionManager::GetInstance()->SetEnable(true);
 
-    
   return managerInitialized;
 }
 
 void MotionController::initActionEditor()
 {
   /*
-   * Set up the action editor module to control DARwIn-OP by running pages. 
+   * Set up the action editor module to control DARwIn-OP by running pages.
    * Make sure that the motion manager has already been initialized first
    */
   if(managerInitialized)
@@ -164,13 +163,13 @@ void MotionController::initWalking()
    * Get DARwIn ready for walking. Make sure motion manager has been 
    * initialized first.
    */
-    
+
   if(managerInitialized)
     {
       Walking::GetInstance()->LoadINISettings(static_cast<minIni*> (ini));
-        
+
       MotionManager::GetInstance()->AddModule((MotionModule*)Walking::GetInstance());
-        
+
       // Have DARwIn get to walk ready position SLOWLY
       int n = 0;
       int param[JointData::NUMBER_OF_JOINTS * 5];
@@ -196,20 +195,20 @@ void MotionController::initWalking()
 	  param[n++] = CM730::GetHighByte(wDistance);
         }
       (static_cast<CM730*>(cm730))->SyncWrite(MX28::P_GOAL_POSITION_L, 5, JointData::NUMBER_OF_JOINTS - 1, param);
-        
+
       usleep(1000000); // Give DARwIn time to get to the position
-        
+
       // Enable walking and the motion manager
-      // Walking::GetInstance()->m_Joint.SetEnableBody(true);
-      // MotionManager::GetInstance()->SetEnable(true);
-      // TODO: Do I need the previous two lines?
-        
+      Walking::GetInstance()->m_Joint.SetEnableBody(true);
+      MotionManager::GetInstance()->SetEnable(true);
+      // TODO: Do I need the previous two lines? Walking did not enable all the needed joints when they were both commented, but I'm unsure if/how much they interfere with action editor or head movements
+
       Walking::GetInstance()->Initialize();
-        
+
       // Set walking flag
       walkingInitialized = true;
     }
-    
+
   else
     {
       printf("Motion manager is not initialized. Run initMotionManager() first");
